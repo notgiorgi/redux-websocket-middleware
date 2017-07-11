@@ -2,15 +2,14 @@
   "private": true,
   "name": "redux-websocket-middleware",
   "version": "1.0.0",
-  "description": "Declarative websockets for Redux.",
+  "description": "Declarative native websockets for Redux",
   "main": "dist/redux-websocket-middleware.js",
-  "jsnext:main": "dist/redux-websocket-middleware.mjs",
-  "module": "src/index.js",
   "scripts": {
     "build": "rollup --config",
     "start": "rollup --config --watch",
     "pretest": "npm run build",
-    "test": "standard && mocha --compilers js:buble/register",
+    "lint": "eslint ./src",
+    "test": "npm run lint && mocha --compilers js:buble/register",
     "prepublish": "npm run test"
   },
   "keywords": [
@@ -19,9 +18,15 @@
     "middleware",
     "action"
   ],
-  "author": "Adrian Schaedle",
+  "author": "Giorgi Bagdavadze",
   "license": "MIT",
   "devDependencies": {
+    "eslint": "^4.2.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-node": "^5.1.0",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^3.0.1",
     "mocha": "^3.1.1",
     "mock-socket": "^6.0.1",
     "rollup": "^0.36.3",
