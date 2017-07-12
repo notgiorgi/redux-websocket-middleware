@@ -1,27 +1,13 @@
 import {
   isSocketAction,
-  isIncomingMessage,
-  undefinedEndpointErrorMessage,
-  encodeMessage,
-  decodeMessage
+  isIncomingMessage
 } from './utils'
 
-import {
-  createConnectionAction,
-  createDisonnectionAction,
-  createErrorAction,
-  createMessageAction
-} from './actions'
-
-const NO_CONNECTION = null
+import { ConnectionManager } from './lib'
 
 export default function createWebsocketMiddleware (options = {}) {
-  const connections = {}
-
   return function (store) {
-    if (options.defaultEndpoint) {
-      setupSocket(options.defaultEndpoint)
-    }
+    const connections = new ConnectionManager(store, options)
 
     return function (next) {
       return function (action) {
@@ -31,55 +17,19 @@ export default function createWebsocketMiddleware (options = {}) {
 
         const endpoint = action.meta.socket
 
-        const connection = getConnection(endpoint)
+        const connection = connections.has(endpoint)
+          ? connections.get(endpoint)
+          : connections.add(endpoint)
 
-        if (connection === NO_CONNECTION && !options.defaultEndpoint) {
-          throw new Error(undefinedEndpointErrorMessage(action))
+        if (connection) {
+          connection.socket.send(action.payload)
+        } else {
+          console.warn(`
+            You haven't set up default endpoint
+            Or the endpoint you're trying to use
+            Is not connected: ${endpoint}
+          `)
         }
-
-        connection.socket.send(encodeMessage(action.payload.message))
-      }
-    }
-
-    function setupSocket (endpoint) {
-      const connection = {
-        endpoint: endpoint,
-        socket: new WebSocket(endpoint),
-        queue: []
-      }
-
-      connections[endpoint] = connection
-
-      connection.socket.onmessage = function (e) {
-        store.dispatch(createMessageAction(endpoint, decodeMessage(e.data)))
-      }
-
-      connection.socket.onopen = function () {
-        store.dispatch(createConnectionAction(endpoint))
-      }
-
-      connection.socket.onclose = function () {
-        store.dispatch(createDisonnectionAction(endpoint))
-      }
-
-      connection.socket.onerror = function (error) {
-        store.dispatch(createErrorAction(endpoint, error))
-      }
-
-      return connection
-    }
-
-    function getConnection (endpoint) {
-      switch (typeof endpoint) {
-        case 'string':
-          if (connections[endpoint]) {
-            return connections[endpoint]
-          }
-          return setupSocket(endpoint)
-        case 'boolean':
-          return connections[options.defaultEndpoint]
-        default:
-          return setupSocket(endpoint)
       }
     }
   }

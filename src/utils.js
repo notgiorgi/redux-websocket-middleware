@@ -1,3 +1,5 @@
+const backoff = require('backoff')
+
 export function isSocketAction (action) {
   return Boolean(action && action.meta && action.meta.socket)
 }
@@ -6,29 +8,15 @@ export function isIncomingMessage (action) {
   return Boolean(action && action.meta && action.meta.incoming)
 }
 
-export function undefinedEndpointErrorMessage (action) {
-  return `Whoops! You tried to dispatch an action to a socket instance that
-  doesn't exist, as you didn't specify an endpoint in the action itself:
+export function setBackoff (cb, failAfter = 6) {
+  const bo = backoff.exponential({
+    initialDelay: 1000
+  })
+  const doBackoff = bo.backoff.bind(bo)
 
-  ${JSON.stringify(action, null, 4)}
+  bo.on('ready', () => cb(doBackoff))
 
-  Or you didn't set the 'defaultEndpoint' config option when creating your
-  middleware instance.`
-}
+  bo.backoff()
 
-export function encodeMessage (message) {
-  switch (typeof message) {
-    case 'object':
-      return JSON.stringify(message)
-    default:
-      return message
-  }
-}
-
-export function decodeMessage (message) {
-  try {
-    return JSON.parse(message)
-  } catch (e) {
-    return message
-  }
+  bo.failAfter(failAfter)
 }
