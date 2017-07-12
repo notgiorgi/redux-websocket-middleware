@@ -22,8 +22,8 @@ function writeToSocket(data) {
 }
 ```
 
-[x] Creating and opening the WebSocket for multiple endpoints (you can have one default)
-[x] Handling JSON encoding/decoding of messages
-[x] Retrying the connection when lost, and exponentially backing off
-[x] Batching writes when offline, and sending when available
-[ ] Tests
+- [x] Creating and opening the WebSocket for multiple endpoints (you can have one default)
+- [x] Handling JSON encoding/decoding of messages
+- [x] Retrying the connection when lost, and exponentially backing off
+- [x] Batching writes when offline, and sending when available
+- [ ] Tests
