@@ -14,13 +14,20 @@ export default class Connection {
   subscribe ({ onMessage, onOpen, onError, onClose }) {
     this.connection = new this.Socket(this.endpoint)
 
+    this.handlers = {
+      onMessage,
+      onOpen,
+      onError,
+      onClose
+    }
+
     Object.assign(
       this.connection,
       {
         onopen: this._onOpen(onOpen).bind(this),
         onerror: this._onError(onError).bind(this),
         onmessage: this._onMessage(onMessage).bind(this),
-        onclose: onClose
+        onclose: this._onClose(onClose).bind(this)
       }
     )
 
@@ -41,7 +48,7 @@ export default class Connection {
         this.codec.encode(data)
       )
     } else {
-      this.queue.push(data)
+      this.queue.enqeue(data)
     }
   }
 
@@ -69,6 +76,7 @@ export default class Connection {
         this.backingOff = true
         setBackoff(reset => {
           if (this.connection.readyState !== WebSocket.OPEN) {
+            this.subscribe(this.handlers)
             reset()
           } else {
             this.backingOff = false
@@ -77,5 +85,9 @@ export default class Connection {
       }
       cb(err)
     }
+  }
+
+  _onClose(cb) {
+    return this._onError(cb)
   }
 }

@@ -1,5 +1,5 @@
 export default class JSONCodec {
-  encode (message) {
+  static encode (message) {
     switch (typeof message) {
       case 'object':
         return JSON.stringify(message)
@@ -8,7 +8,7 @@ export default class JSONCodec {
     }
   }
 
-  decode (message) {
+  static decode (message) {
     try {
       return JSON.parse(message)
     } catch (e) {

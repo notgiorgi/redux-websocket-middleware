@@ -20,7 +20,7 @@ export default function createWebsocketMiddleware (options = {}) {
         : connections.add(endpoint)
 
       if (connection) {
-        connection.socket.send(action.payload)
+        connection.send(action.payload)
       } else {
         console.warn(`
             You haven't set up default endpoint
