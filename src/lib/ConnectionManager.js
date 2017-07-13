@@ -44,20 +44,10 @@ export default class ConnectionManager {
   }
 
   get (endpoint) {
-    const connections = this.storage
-    switch (typeof endpoint) {
-      case 'string':
-        return connections[endpoint]
-      case 'boolean':
-        const def = connections[this.options.defaultEndpoint]
-        if (!def) throw new Error('No default Endpoint specified')
-        return def
-      default:
-        throw new TypeError('Endpoint should be either a string, or true which means default')
-    }
+    return this.storage[endpoint]
   }
 
   has (endpoint) {
-    return (endpoint === true) || this.storage[endpoint] !== undefined
+    return this.storage[endpoint] !== undefined
   }
 }
