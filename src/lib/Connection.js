@@ -24,10 +24,10 @@ export default class Connection {
     Object.assign(
       this.connection,
       {
-        onopen: this._onOpen(onOpen).bind(this),
-        onerror: this._onError(onError).bind(this),
-        onmessage: this._onMessage(onMessage).bind(this),
-        onclose: this._onClose(onClose).bind(this)
+        onopen: this._onOpen.bind(this),
+        onerror: this._onError.bind(this),
+        onmessage: this._onMessage.bind(this),
+        onclose: this._onClose.bind(this)
       }
     )
 
@@ -52,42 +52,42 @@ export default class Connection {
     }
   }
 
-  _onOpen (cb) {
-    return () => {
-      while (!this.queue.empty() && this.isConnected()) {
-        this.send(this.queue.dequeue())
-      }
-
-      cb()
+  _onOpen () {
+    while (!this.queue.empty() && this.isConnected()) {
+      this.send(this.queue.dequeue())
     }
+
+    this.handlers.onOpen()
   }
 
-  _onMessage (cb) {
-    return event => {
-      cb(
-        this.codec.decode(event.data)
-      )
-    }
+  _onMessage (event) {
+    this.handlers.onMessage(
+      this.codec.decode(event.data)
+    )
   }
 
-  _onError (cb) {
-    return err => {
-      if (!this.backingOff) {
-        this.backingOff = true
-        setBackoff(reset => {
-          if (this.connection.readyState !== WebSocket.OPEN) {
-            this.subscribe(this.handlers)
-            reset()
-          } else {
-            this.backingOff = false
-          }
-        })
-      }
-      cb(err)
-    }
+  _onError (err) {
+    this.handlers.onError()
+    this._startBackingOff()
   }
 
-  _onClose(cb) {
-    return this._onError(cb)
+  _onClose () {
+    this.handlers.onClose()
+    this._startBackingOff()
+  }
+
+  _startBackingOff () {
+    if (!this.backingOff) {
+      this.backingOff = true
+
+      setBackoff(nextBackOff => {
+        if (!this.isConnected()) {
+          this.subscribe(this.handlers)
+          nextBackOff()
+        } else {
+          this.backingOff = false
+        }
+      })
+    }
   }
 }
