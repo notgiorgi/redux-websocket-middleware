@@ -67,7 +67,7 @@ export default class Connection {
   }
 
   _onError (err) {
-    this.handlers.onError()
+    this.handlers.onError(err)
     this._startBackingOff()
   }
 

@@ -1,6 +1,6 @@
 import {
   isIncomingSocketMessage,
-  isOutgoingSocketMessage,
+  isOutgoingSocketMessage
 } from './utils'
 
 import { ConnectionManager } from './lib'
@@ -22,7 +22,7 @@ export default function createWebsocketMiddleware (options = {}) {
           ? connections.get(endpoint)
           : connections.add(endpoint)
 
-          connection.send(action.payload)
+        connection.send(action.payload)
       } else {
         console.warn(`
             You provided socket: ${endpoint},
