@@ -1,10 +1,10 @@
 const backoff = require('backoff')
 
-export function isSocketAction (action) {
+export function isOutgoingSocketMessage (action) {
   return Boolean(action && action.meta && action.meta.socket)
 }
 
-export function isIncomingMessage (action) {
+export function isIncomingSocketMessage (action) {
   return Boolean(action && action.meta && action.meta.incoming)
 }
 

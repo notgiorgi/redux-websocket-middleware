@@ -1,6 +1,6 @@
 import {
-  isSocketAction,
-  isIncomingMessage
+  isIncomingSocketMessage,
+  isOutgoingSocketMessage,
 } from './utils'
 
 import { ConnectionManager } from './lib'
@@ -9,24 +9,28 @@ export default function createWebsocketMiddleware (options = {}) {
   return store => {
     const connections = new ConnectionManager(store, options)
     return next => action => {
-      if (!isSocketAction(action) || isIncomingMessage(action)) {
+      if (!isOutgoingSocketMessage(action) || isIncomingSocketMessage(action)) {
         return next(action)
       }
 
-      const endpoint = action.meta.socket
+      const endpoint = action.meta.socket === true
+        ? options.defaultEndpoint
+        : action.meta.socket
 
-      const connection = connections.has(endpoint)
-        ? connections.get(endpoint)
-        : connections.add(endpoint)
+      if (typeof endpoint === 'string') {
+        const connection = connections.has(endpoint)
+          ? connections.get(endpoint)
+          : connections.add(endpoint)
 
-      if (connection) {
-        connection.send(action.payload)
+          connection.send(action.payload)
       } else {
         console.warn(`
-            You haven't set up default endpoint
-            Or the endpoint you're trying to use
-            Is not connected: ${endpoint}
-          `)
+            You provided socket: ${endpoint},
+            which is not valid because:
+            Either its \`true\` and you forgot to setup
+            default endpoint, or its not a string and is some
+            invalid value. This action will be ignored:
+        `, action)
       }
     }
   }
