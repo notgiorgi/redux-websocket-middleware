@@ -34,7 +34,6 @@ export default class ConnectionManager {
         this.store.dispatch(createMessageAction(endpoint, data));
       },
       onClose: close => {
-        console.log("add onClose: %o", close);
         this.store.dispatch(createDisonnectionAction(endpoint, close));
       },
       onError: error => {
