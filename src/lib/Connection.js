@@ -6,7 +6,7 @@ export default class Connection {
   constructor(
     endpoint,
     store,
-    reconnectCallback,
+    reconnectCallback = null,
     queue = new MessageQueue(),
     codec = JSONCodec,
     Socket = window.WebSocket
@@ -14,10 +14,10 @@ export default class Connection {
     this.queue = queue;
     this.endpoint = endpoint;
     this.backingOff = false;
-    this.codec = codec;
-    this.Socket = Socket;
     this.store = store;
     this.reconnectCallback = reconnectCallback;
+    this.codec = codec;
+    this.Socket = Socket;
   }
 
   subscribe({ onMessage, onOpen, onError, onClose }) {
@@ -74,6 +74,9 @@ export default class Connection {
   }
 
   _onClose(close) {
+    console.log("reconCll: %o", this.reconnectCallback);
+    console.log("store: %o", store);
+
     this.handlers.onClose(close);
     if (this.reconnectCallback !== null) {
       this.reconnectCallback(this.store);
