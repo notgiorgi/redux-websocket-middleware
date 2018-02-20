@@ -75,7 +75,7 @@ export default class Connection {
 
   _onClose(close) {
     console.log("reconCll: %o", this.reconnectCallback);
-    console.log("store: %o", store);
+    console.log("store: %o", this.store);
 
     this.handlers.onClose(close);
     if (this.reconnectCallback !== null) {

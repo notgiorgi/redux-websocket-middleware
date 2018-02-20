@@ -6,6 +6,8 @@ export default function createWebsocketMiddleware(
   options = {},
   reconnectCallback = null
 ) {
+  console.log("createWebsocketMiddleware: %o", reconnectCallback);
+
   return store => {
     const connections = new ConnectionManager(
       store,
