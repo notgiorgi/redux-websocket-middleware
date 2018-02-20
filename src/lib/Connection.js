@@ -5,11 +5,11 @@ import { JSONCodec } from "./Codecs";
 export default class Connection {
   constructor(
     endpoint,
+    store,
+    reconnectCallback,
     queue = new MessageQueue(),
     codec = JSONCodec,
-    Socket = window.WebSocket,
-    store,
-    reconnectCallback
+    Socket = window.WebSocket
   ) {
     this.queue = queue;
     this.endpoint = endpoint;
