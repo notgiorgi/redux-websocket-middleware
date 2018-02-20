@@ -79,7 +79,7 @@ export default class Connection {
 
     this.handlers.onClose(close);
     if (this.reconnectCallback !== null) {
-      this.reconnectCallback(this.store);
+      this.reconnectCallback(this.store, close);
     } else {
       this._startBackingOff();
     }
