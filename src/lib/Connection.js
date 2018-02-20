@@ -7,13 +7,17 @@ export default class Connection {
     endpoint,
     queue = new MessageQueue(),
     codec = JSONCodec,
-    Socket = window.WebSocket
+    Socket = window.WebSocket,
+    store,
+    reconnectCallback
   ) {
     this.queue = queue;
     this.endpoint = endpoint;
     this.backingOff = false;
     this.codec = codec;
     this.Socket = Socket;
+    this.store = store;
+    this.reconnectCallback = reconnectCallback;
   }
 
   subscribe({ onMessage, onOpen, onError, onClose }) {
@@ -71,7 +75,11 @@ export default class Connection {
 
   _onClose(close) {
     this.handlers.onClose(close);
-    this._startBackingOff();
+    if (this.reconnectCallback !== null) {
+      this.reconnectCallback(this.store);
+    } else {
+      this._startBackingOff();
+    }
   }
 
   _startBackingOff() {
