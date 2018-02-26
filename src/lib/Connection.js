@@ -53,6 +53,7 @@ export default class Connection {
       this.connection.send(this.codec.encode(data));
     } else {
       this.queue.enqeue(data);
+      this.subscribe(this.handlers);
     }
   }
 
