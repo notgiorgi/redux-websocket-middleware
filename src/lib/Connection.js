@@ -48,12 +48,18 @@ export default class Connection {
     return this.connection.readyState === WebSocket.OPEN;
   }
 
+  isClosed() {
+    return this.connection.readyState === WebSocket.CLOSED;
+  }
+
   send(data) {
     if (this.isConnected()) {
       this.connection.send(this.codec.encode(data));
     } else {
       this.queue.enqeue(data);
-      this.subscribe(this.handlers);
+      if (this.isClosed()) {
+        this.subscribe(this.handlers);
+      }
     }
   }
 

@@ -53,4 +53,10 @@ export default class ConnectionManager {
   has(endpoint) {
     return this.storage[endpoint] !== undefined;
   }
+
+  remove(endpoint) {
+    let s = Object.assign({}, this.storage);
+    delete s[endpoint];
+    this.storage = s;
+  }
 }
