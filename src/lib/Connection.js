@@ -58,7 +58,6 @@ export default class Connection {
     } else {
       this.queue.enqeue(data)
       if (this.isClosed()) {
-        console.log('send isClosed %o', data)
         this.subscribe(this.handlers)
       }
     }
