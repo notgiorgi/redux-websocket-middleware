@@ -12,7 +12,7 @@ export function createConnectionAction (endpoint) {
   }
 }
 
-export function createDisonnectionAction (endpoint, clode) {
+export function createDisonnectionAction (endpoint, close) {
   return {
     type: ActionTypes.WEBSOCKET_DISCONNECTED,
     payload: close,

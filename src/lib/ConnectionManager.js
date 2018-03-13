@@ -23,9 +23,9 @@ export default class ConnectionManager {
     const connection = new Connection(
       endpoint,
       this.store,
-      this.reconnectCallback,
       new MessageQueue(),
-      this.options.codec
+      this.options.codec,
+      this.reconnectCallback
     ).subscribe({
       onOpen: () => {
         this.store.dispatch(createConnectionAction(endpoint))
