@@ -8,7 +8,7 @@ import {
 import { MessageQueue, Connection } from './'
 
 export default class ConnectionManager {
-  constructor (store, options = {}, reconnectCallback = null) {
+  constructor (store, options = {}) {
     this.store = store
     this.options = options
     this.storage = {}
@@ -16,16 +16,15 @@ export default class ConnectionManager {
     if (this.options.defaultEndpoint) {
       this.add(this.options.defaultEndpoint)
     }
-    this.reconnectCallback = reconnectCallback
   }
 
-  add (endpoint) {
+  add (endpoint, reconnectCallback = null) {
     const connection = new Connection(
       endpoint,
       this.store,
       new MessageQueue(),
       this.options.codec,
-      this.reconnectCallback
+      reconnectCallback
     ).subscribe({
       onOpen: () => {
         this.store.dispatch(createConnectionAction(endpoint))

@@ -7,7 +7,7 @@ export default function createWebsocketMiddleware (
   reconnectCallback = null
 ) {
   return store => {
-    const connections = new ConnectionManager(store, options, reconnectCallback)
+    const connections = new ConnectionManager(store, options)
     return next => action => {
       if (!isOutgoingSocketMessage(action) || isIncomingSocketMessage(action)) {
         return next(action)
@@ -21,7 +21,7 @@ export default function createWebsocketMiddleware (
       if (typeof endpoint === 'string') {
         const connection = connections.has(endpoint)
           ? connections.get(endpoint)
-          : connections.add(endpoint)
+          : connections.add(endpoint, reconnectCallback)
 
         connection.send(action.payload)
       } else {

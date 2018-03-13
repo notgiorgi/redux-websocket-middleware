@@ -8,8 +8,8 @@ export default class Connection {
     store,
     queue = new MessageQueue(),
     codec = JSONCodec,
-    Socket = window.WebSocket,
-    reconnectCallback = null
+    reconnectCallback = null,
+    Socket = window.WebSocket
   ) {
     this.queue = queue
     this.endpoint = endpoint
