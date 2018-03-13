@@ -1,33 +1,29 @@
-import { isIncomingSocketMessage, isOutgoingSocketMessage } from "./utils";
+import { isIncomingSocketMessage, isOutgoingSocketMessage } from './utils'
 
-import { ConnectionManager } from "./lib";
+import { ConnectionManager } from './lib'
 
-export default function createWebsocketMiddleware(
+export default function createWebsocketMiddleware (
   options = {},
   reconnectCallback = null
 ) {
   return store => {
-    const connections = new ConnectionManager(
-      store,
-      options,
-      reconnectCallback
-    );
+    const connections = new ConnectionManager(store, options, reconnectCallback)
     return next => action => {
       if (!isOutgoingSocketMessage(action) || isIncomingSocketMessage(action)) {
-        return next(action);
+        return next(action)
       }
 
       const endpoint =
         action.meta.socket === true
           ? options.defaultEndpoint
-          : action.meta.socket;
+          : action.meta.socket
 
-      if (typeof endpoint === "string") {
+      if (typeof endpoint === 'string') {
         const connection = connections.has(endpoint)
           ? connections.get(endpoint)
-          : connections.add(endpoint);
+          : connections.add(endpoint)
 
-        connection.send(action.payload);
+        connection.send(action.payload)
       } else {
         console.warn(
           `
@@ -38,8 +34,8 @@ export default function createWebsocketMiddleware(
             invalid value. This action will be ignored:
         `,
           action
-        );
+        )
       }
-    };
-  };
+    }
+  }
 }
