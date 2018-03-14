@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "redux-websocket-middleware",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Declarative native websockets for Redux",
   "main": "dist/redux-websocket-middleware.js",
   "scripts": {
