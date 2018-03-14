@@ -3,12 +3,21 @@ import MessageQueue from './MessageQueue'
 import { JSONCodec } from './Codecs'
 
 export default class Connection {
-  constructor (endpoint, queue = new MessageQueue(), codec = JSONCodec, Socket = window.WebSocket) {
+  constructor (
+    endpoint,
+    store,
+    queue = new MessageQueue(),
+    codec = JSONCodec,
+    reconnectCallback = null,
+    Socket = window.WebSocket
+  ) {
     this.queue = queue
     this.endpoint = endpoint
     this.backingOff = false
+    this.store = store
     this.codec = codec
     this.Socket = Socket
+    this.reconnectCallback = reconnectCallback
   }
 
   subscribe ({ onMessage, onOpen, onError, onClose }) {
@@ -21,15 +30,12 @@ export default class Connection {
       onClose
     }
 
-    Object.assign(
-      this.connection,
-      {
-        onopen: this._onOpen.bind(this),
-        onerror: this._onError.bind(this),
-        onmessage: this._onMessage.bind(this),
-        onclose: this._onClose.bind(this)
-      }
-    )
+    Object.assign(this.connection, {
+      onopen: this._onOpen.bind(this),
+      onerror: this._onError.bind(this),
+      onmessage: this._onMessage.bind(this),
+      onclose: this._onClose.bind(this)
+    })
 
     return this
   }
@@ -42,13 +48,18 @@ export default class Connection {
     return this.connection.readyState === WebSocket.OPEN
   }
 
+  isClosed () {
+    return this.connection.readyState === WebSocket.CLOSED
+  }
+
   send (data) {
     if (this.isConnected()) {
-      this.connection.send(
-        this.codec.encode(data)
-      )
+      this.connection.send(this.codec.encode(data))
     } else {
       this.queue.enqeue(data)
+      if (this.isClosed()) {
+        this.subscribe(this.handlers)
+      }
     }
   }
 
@@ -61,9 +72,7 @@ export default class Connection {
   }
 
   _onMessage (event) {
-    this.handlers.onMessage(
-      this.codec.decode(event.data)
-    )
+    this.handlers.onMessage(this.codec.decode(event.data))
   }
 
   _onError (err) {
@@ -71,9 +80,13 @@ export default class Connection {
     this._startBackingOff()
   }
 
-  _onClose () {
-    this.handlers.onClose()
-    this._startBackingOff()
+  _onClose (close) {
+    this.handlers.onClose(close)
+    if (this.reconnectCallback !== null) {
+      this.reconnectCallback(this.store, close)
+    } else {
+      this._startBackingOff()
+    }
   }
 
   _startBackingOff () {

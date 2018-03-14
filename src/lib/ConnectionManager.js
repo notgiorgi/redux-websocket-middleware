@@ -18,11 +18,13 @@ export default class ConnectionManager {
     }
   }
 
-  add (endpoint) {
+  add (endpoint, reconnectCallback = null) {
     const connection = new Connection(
       endpoint,
+      this.store,
       new MessageQueue(),
-      this.options.codec
+      this.options.codec,
+      reconnectCallback
     ).subscribe({
       onOpen: () => {
         this.store.dispatch(createConnectionAction(endpoint))
@@ -30,10 +32,10 @@ export default class ConnectionManager {
       onMessage: data => {
         this.store.dispatch(createMessageAction(endpoint, data))
       },
-      onClose: () => {
-        this.store.dispatch(createDisonnectionAction(endpoint))
+      onClose: close => {
+        this.store.dispatch(createDisonnectionAction(endpoint, close))
       },
-      onError: (error) => {
+      onError: error => {
         this.store.dispatch(createErrorAction(endpoint, error))
       }
     })
@@ -49,5 +51,11 @@ export default class ConnectionManager {
 
   has (endpoint) {
     return this.storage[endpoint] !== undefined
+  }
+
+  remove (endpoint) {
+    let s = Object.assign({}, this.storage)
+    delete s[endpoint]
+    this.storage = s
   }
 }

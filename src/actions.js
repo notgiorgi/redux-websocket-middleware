@@ -12,9 +12,10 @@ export function createConnectionAction (endpoint) {
   }
 }
 
-export function createDisonnectionAction (endpoint) {
+export function createDisonnectionAction (endpoint, close) {
   return {
     type: ActionTypes.WEBSOCKET_DISCONNECTED,
+    payload: close,
     meta: { socket: endpoint, incoming: true }
   }
 }
