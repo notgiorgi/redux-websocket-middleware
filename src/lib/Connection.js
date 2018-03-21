@@ -60,7 +60,7 @@ export default class Connection {
       if (this.isClosed()) {
         this.subscribe(this.handlers)
         if (!enqueue) {
-          this.send(data);
+          this.send(data)
         }
       }
     }
