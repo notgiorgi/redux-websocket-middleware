@@ -23,7 +23,7 @@ export default function createWebsocketMiddleware (
           ? connections.get(endpoint)
           : connections.add(endpoint, reconnectCallback)
 
-        connection.send(action.payload)
+        connection.send(action.payload, action.meta.enqueue)
       } else {
         console.warn(
           `
