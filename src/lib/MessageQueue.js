@@ -1,7 +1,6 @@
-// import isEqual from "lodash.isequal"
 const isEqual = require('lodash.isequal')
 
-export default class MessageQueue {
+class MessageQueue {
   constructor (initialState = []) {
     this._queue = [...initialState]
   }
@@ -25,3 +24,4 @@ export default class MessageQueue {
     return this._queue.length === 0
   }
 }
+export default MessageQueue

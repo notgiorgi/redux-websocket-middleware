@@ -1,6 +1,6 @@
 {
   "name": "redux-mw-ws",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Declarative native websockets for Redux",
   "main": "dist/redux-websocket-middleware.js",
   "scripts": {
