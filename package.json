@@ -1,7 +1,6 @@
 {
-  "private": true,
   "name": "redux-mw-ws",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Declarative native websockets for Redux",
   "main": "dist/redux-websocket-middleware.js",
   "scripts": {
@@ -42,6 +41,7 @@
     "standard": "^8.3.0"
   },
   "dependencies": {
-    "backoff": "^2.5.0"
+    "backoff": "^2.5.0",
+    "lodash.isequal": "^4.5.0"
   }
 }
