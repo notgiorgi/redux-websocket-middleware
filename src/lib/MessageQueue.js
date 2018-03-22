@@ -1,4 +1,5 @@
-import isEqual from "lodash.isequal"
+// import isEqual from "lodash.isequal"
+const isEqual = require('lodash.isequal')
 
 export default class MessageQueue {
   constructor (initialState = []) {
