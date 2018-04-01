@@ -52,11 +52,11 @@ export default class Connection {
     return this.connection.readyState === WebSocket.CLOSED
   }
 
-  send (data) {
+  send (data, enqueueOnce = false) {
     if (this.isConnected()) {
       this.connection.send(this.codec.encode(data))
     } else {
-      this.queue.enqeue(data)
+      this.queue.enqeue(data, enqueueOnce)
       if (this.isClosed()) {
         this.subscribe(this.handlers)
       }

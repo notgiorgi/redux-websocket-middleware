@@ -1,10 +1,19 @@
-export default class MessageQueue {
+const isEqual = require('lodash.isequal')
+
+class MessageQueue {
   constructor (initialState = []) {
     this._queue = [...initialState]
   }
 
-  enqeue (x) {
-    this._queue.push(x)
+  enqeue (x, enqueueOnce = false) {
+    if (enqueueOnce) {
+      const included = this._queue.filter(y => isEqual(x, y))
+      if (included.length === 0) {
+        this._queue.push(x)
+      }
+    } else {
+      this._queue.push(x)
+    }
   }
 
   dequeue (x) {
@@ -15,3 +24,4 @@ export default class MessageQueue {
     return this._queue.length === 0
   }
 }
+export default MessageQueue

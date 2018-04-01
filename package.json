@@ -1,7 +1,6 @@
 {
-  "private": true,
-  "name": "redux-websocket-middleware",
-  "version": "1.1.0",
+  "name": "redux-mw-ws",
+  "version": "1.2.2",
   "description": "Declarative native websockets for Redux",
   "main": "dist/redux-websocket-middleware.js",
   "scripts": {
@@ -18,7 +17,7 @@
     "middleware",
     "action"
   ],
-  "author": "Giorgi Bagdavadze",
+  "author": "Giorgi Bagdavadze/ Erik Rudisch",
   "license": "MIT",
   "devDependencies": {
     "babel-plugin-external-helpers": "^6.22.0",
@@ -42,6 +41,7 @@
     "standard": "^8.3.0"
   },
   "dependencies": {
-    "backoff": "^2.5.0"
+    "backoff": "^2.5.0",
+    "lodash.isequal": "^4.5.0"
   }
 }
